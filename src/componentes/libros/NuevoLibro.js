@@ -3,124 +3,128 @@ import { Link } from 'react-router-dom';
 import { firestoreConnect } from 'react-redux-firebase';
 import PropTypes from 'prop-types';
 
-class NuevoSuscriptor extends Component {
+class NuevoLibro extends Component {
     state = { 
-        nombre: '',
-        apellido: '',
-        carrera : '',
-        codigo : ''
-    }
+        titulo: '',
+        ISBN: '',
+        editorial: '',
+        existencia : ''
+     }
 
-    // Agrega un nuevo suscriptor a la base de datos
-    agregarSuscriptor = e => {
-        e.preventDefault();
+     // guardar el libro en la base de datos
+     agregarLibro = e => {
+         e.preventDefault();
 
-        // extraer los valores del state
-        const nuevoSuscriptor = this.state;
+         // tomar una copia del state
+        const nuevoLibro = this.state;
 
-        // extraer firestore  de props
-        const { firestore, history } = this.props
+        // agregar un arreglo de interesados.
+        nuevoLibro.prestados = [];
 
-        //Guardarlo en la base de datos
-        firestore.add({ collection : 'suscriptores' }, nuevoSuscriptor)
-            .then(() => history.push('/suscriptores') )
-    }
+         // extraer firestore con sus métodos
+         const { firestore, history } = this.props;
+          
+         // añadirlo a la base de datos y redireccionar
+         firestore.add({collection: 'libros'}, nuevoLibro)
+            .then(() => history.push('/'))
+     }
 
-    // extrae los valores del input y los coloca en el state
-    leerDato = e => {
-        this.setState({
-            [e.target.name] : e.target.value
-        })
-    }
+     // almacena lo que el usuario escribe en el state
+     leerDato = e => {
+         this.setState({
+             [e.target.name] : e.target.value
+         })
+     }
+
 
     render() { 
         return ( 
             <div className="row">
                 <div className="col-12 mb-4">
-                    <Link to={'/suscriptores'} className="btn btn-secondary">
+                    <Link to="/" className="btn btn-secondary">
                         <i className="fas fa-arrow-circle-left"></i> {''}
                         Volver al Listado
                     </Link>
                 </div>
                 <div className="col-12">
                     <h2>
-                        <i className="fas fa-user-plus"></i> {''}
-                        Nuevo Suscriptor
+                        <i className="fas fa-book"></i> {''}
+                        Nuevo Libro
                     </h2>
 
                     <div className="row justify-content-center">
                         <div className="col-md-8 mt-5">
                             <form
-                                onSubmit={this.agregarSuscriptor}
+                                onSubmit={this.agregarLibro}
                             >
                                 <div className="form-group">
-                                    <label>Nombre:</label>
+                                    <label>Titulo:</label>
                                     <input 
                                         type="text"
                                         className="form-control"
-                                        name="nombre"
-                                        placeholder="Nombre del Suscriptor"
+                                        name="titulo"
+                                        placeholder="Titulo o Nombre de Libro"
                                         required
+                                        value={this.state.titulo}
                                         onChange={this.leerDato}
-                                        value={this.state.nombre}
                                     />
                                 </div>
 
                                 <div className="form-group">
-                                    <label>Apellido:</label>
+                                    <label>Editorial:</label>
                                     <input 
                                         type="text"
                                         className="form-control"
-                                        name="apellido"
-                                        placeholder="Apellido del Suscriptor"
+                                        name="editorial"
+                                        placeholder="Editorial de Libro"
                                         required
+                                        value={this.state.editorial}
                                         onChange={this.leerDato}
-                                        value={this.state.apellido}
                                     />
                                 </div>
 
                                 <div className="form-group">
-                                    <label>Carrera:</label>
+                                    <label>ISBN:</label>
                                     <input 
                                         type="text"
                                         className="form-control"
-                                        name="carrera"
-                                        placeholder="Carrera del Suscriptor"
+                                        name="ISBN"
+                                        placeholder="ISBN de Libro"
                                         required
+                                        value={this.state.ISBN}
                                         onChange={this.leerDato}
-                                        value={this.state.carrera}
                                     />
                                 </div>
 
                                 <div className="form-group">
-                                    <label>Código:</label>
+                                    <label>Existencia:</label>
                                     <input 
-                                        type="text"
+                                        type="number"
+                                        min="0"
                                         className="form-control"
-                                        name="codigo"
-                                        placeholder="Código del Suscriptor"
+                                        name="existencia"
+                                        placeholder="Cantidad en Existencia"
                                         required
+                                        value={this.state.existencia}
                                         onChange={this.leerDato}
-                                        value={this.state.codigo}
                                     />
                                 </div>
 
-                                <input 
-                                    type="submit"
-                                    value="Agregar Suscriptor"
-                                    className="btn btn-success"
-                                />
+                                <input type="submit" value="Agregar Libro" className="btn btn-success"/>
+
                             </form>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> 
+    
+            
          );
     }
 }
 
-NuevoSuscriptor.propTypes = {
-    firestore : PropTypes.object.isRequired
+NuevoLibro.propTypes = {
+    firestore: PropTypes.object.isRequired
 }
- 
-export default firestoreConnect()( NuevoSuscriptor );
+
+export default firestoreConnect()( NuevoLibro );

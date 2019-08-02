@@ -6,70 +6,74 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Spinner from '../layout/Spinner';
 
-const Suscriptores = ({suscriptores, firestore}) => {
 
-    if(!suscriptores) return <Spinner />;
+const Libros = ({libros, firestore}) => {
 
-    // Eliminar Suscriptores
-    const eliminarSuscriptor = id => {
-        // eliminar
+    const eliminarLibro = id => {
+        // eliminar libro de Firestore
         firestore.delete({
-            collection : 'suscriptores', 
+            collection : 'libros',
             doc : id
         });
+        
     }
+
+    if(!libros) return <Spinner />
+
 
     return ( 
         <div className="row">
-            <div className="col-md-12 mb-4">
-                <Link
-                    to="/suscriptores/nuevo"
-                    className="btn btn-primary"
-                >
+            <div className="col-12 mb-4">
+                <Link to="/libros/nuevo" className="btn btn-success">
                     <i className="fas fa-plus"></i> {''}
-                    Nuevo Suscriptor
+                    Nuevo Libro
                 </Link>
             </div>
             <div className="col-md-8">
                 <h2>
-                    <i className="fas fa-users"></i> Suscriptores
+                    <i className="fas fa-book"></i> {''}
+                    Libros
                 </h2>
             </div>
 
             <table className="table table-striped mt-4">
                 <thead className="text-light bg-primary">
                     <tr>
-                        <th>Nombre</th>
-                        <th>Carrera</th>
+                        <th>Titulo</th>
+                        <th>ISBN</th>
+                        <th>Editorial</th>
+                        <th>Existencia</th>
+                        <th>Disponibles</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    {suscriptores.map(suscriptor => (
-                        <tr key={suscriptor.id}>
-                            <td>{suscriptor.nombre} {suscriptor.apellido}</td>
-                            <td>{suscriptor.carrera}</td>
+                    {libros.map(libro => (
+                        <tr key={libro.id}>
+                            <td>{libro.titulo}</td>
+                            <td>{libro.ISBN}</td>
+                            <td>{libro.editorial}</td>
+                            <td>{libro.existencia}</td>
+                            <td>{libro.existencia - libro.prestados.length}</td>
                             <td>
-                                <Link
-                                    to={`/suscriptores/mostrar/${suscriptor.id}`}
+                                <Link 
+                                    to={`/libros/mostrar/${libro.id}`}
                                     className="btn btn-success btn-block"
-                                >
-                                    <i className="fas fa-angle-double-right"></i> {''}
+                                > 
+                                    <i className="fas fa-angle-double-right"></i> {''}  
                                     Más Información
-                                
                                 </Link>
 
-                                <button
+                                <button 
                                     type="button"
                                     className="btn btn-danger btn-block"
-                                    onClick={ () => eliminarSuscriptor(suscriptor.id) }
+                                    onClick={() => eliminarLibro(libro.id)}
                                 >
                                     <i className="fas fa-trash-alt"></i> {''}
                                     Eliminar
 
                                 </button>
-
                             </td>
                         </tr>
                     ))}
@@ -78,15 +82,15 @@ const Suscriptores = ({suscriptores, firestore}) => {
         </div>
      );
 }
-Suscriptores.propTypes = {
-    firestore : PropTypes.object.isRequired,
-    suscriptores : PropTypes.array
-}
 
+Libros.propTypes = {
+    firestore : PropTypes.object.isRequired,
+    libros: PropTypes.array
+}
  
 export default compose(
-    firestoreConnect([{ collection : 'suscriptores' }]),
+    firestoreConnect([{ collection : 'libros' }]),
     connect((state, props) => ({
-        suscriptores : state.firestore.ordered.suscriptores
+        libros : state.firestore.ordered.libros
     }))
-)(Suscriptores);
+)(Libros);
