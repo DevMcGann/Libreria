@@ -1,7 +1,8 @@
-import {createStore, combineReducers, compose} from 'redux';
-import {reactReduxFirebase, firebaseReducer} from 'react-redux-firebase';
-import {reduxFirestore, firestoreReducer} from 'redux-firestore';
+import { createStore, combineReducers, compose } from 'redux';
+import { reactReduxFirebase, firebaseReducer } from 'react-redux-firebase';
+import { reduxFirestore, firestoreReducer } from 'redux-firestore';
 import firebase from 'firebase/app';
+import 'firebase/auth';
 import 'firebase/firestore';
 
 //configurar firestore
@@ -20,20 +21,20 @@ firebase.initializeApp(firebaseConfig);
 
 //configuracion de react-redux
 const rrfConfig = {
-    userProfile : 'users',
-    useFirestoreForProfile : true
+    userProfile: 'users',
+    useFirestoreForProfile: true
 }
 
 //crear el enhancer con compose de redux y FS
 const createStoreWithFirebase = compose(
-    reactReduxFirebase(firebase,rrfConfig),
+    reactReduxFirebase(firebase, rrfConfig),
     reduxFirestore(firebase)
 )(createStore);
 
 //reducers
 const rootReducer = combineReducers({
-    firebase:firebaseReducer,
-    firestore:firestoreReducer
+    firebase: firebaseReducer,
+    firestore: firestoreReducer
 })
 
 //state inicial
